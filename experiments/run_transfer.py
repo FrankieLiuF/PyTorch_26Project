@@ -26,48 +26,30 @@ from core.trainer import train_transfer_learning
 
 
 def main():
-    # ============================================================
-    # Experiment configuration — edit here to change what runs
-    # ============================================================
     DATASET = 'iris'
     METHODS = ['tinto']
     MODELS = ['efficientnet_v2_m', 'mobilenet_v3_large']
     EPOCHS = 50
     DEVICE = Config.get_device()
 
-    # ============================================================
-    # 1. Load data
-    # ============================================================
-    print(f"\n{'='*60}")
-    print(f"Dataset: {DATASET}")
-    print(f"Methods: {METHODS}")
-    print(f"Models : {MODELS}")
-    print(f"Folds  : {Config.N_FOLDS}")
-    print(f"Epochs : {EPOCHS}")
-    print(f"Device : {DEVICE}")
-    print(f"{'='*60}")
+    print(f"\nDataset: {DATASET}  Methods: {METHODS}  Models: {MODELS}")
+    print(f"Folds: {Config.N_FOLDS}  Epochs: {EPOCHS}  Device: {DEVICE}")
 
     X, y, feature_names, target_names = load_dataset(DATASET)
-    Config.NUM_CLASSES = len(target_names)  # override iris default for this dataset
+    Config.NUM_CLASSES = len(target_names)
 
     Config.create_dirs()
 
-    # ============================================================
-    # 2. Load existing results and build skip-set
-    # ============================================================
     results_csv = Config.RESULTS_DIR / f'{DATASET}_transfer.csv'
     done = set()
 
     if results_csv.exists():
         df_existing = pd.read_csv(results_csv)
         done = set(zip(df_existing['fold'], df_existing['method'], df_existing['model']))
-        print(f"\nFound {len(done)} existing result(s) — will skip")
+        print(f"Found {len(done)} existing result(s), will skip")
 
-    # ============================================================
-    # 3. Triple loop: method × model × fold
-    # ============================================================
     total = len(METHODS) * len(MODELS) * Config.N_FOLDS
-    print(f"Total combinations: {total}  |  Already done: {len(done)}\n")
+    print(f"Total: {total}  Done: {len(done)}\n")
 
     results = []
     count = 0
@@ -77,12 +59,11 @@ def main():
             for fold in range(Config.N_FOLDS):
 
                 if (fold, method, model) in done:
-                    print(f"[{count+1}/{total}] fold={fold} method={method} model={model} → skip")
+                    print(f"[{count+1}/{total}] fold={fold} {method} {model}  skip")
                     count += 1
                     continue
 
-                # --- Train single combination ---
-                print(f"\n[{count+1}/{total}] fold={fold} method={method} model={model}")
+                print(f"\n[{count+1}/{total}] fold={fold} {method} {model}")
                 try:
                     _, _, metrics = train_transfer_learning(
                         X, y,
@@ -104,7 +85,7 @@ def main():
                     })
 
                 except Exception as e:
-                    print(f"  ERROR: {e}")
+                    print(f"ERROR: {e}")
                     results.append({
                         'fold': fold,
                         'method': method,
@@ -114,19 +95,13 @@ def main():
                         'auc_roc': None,
                     })
 
-                # Write after every fold so a crash preserves earlier work
                 pd.DataFrame(results).to_csv(results_csv, index=False)
                 count += 1
 
-    # ============================================================
-    # 4. Print summary
-    # ============================================================
-    print(f"\n{'='*60}")
-    print(f"Done! Results saved to: {results_csv}")
-    print(f"{'='*60}")
+    print(f"\nDone: {results_csv}")
 
     df = pd.read_csv(results_csv)
-    print("\nSummary (mean ± std per method × model):")
+    print("\nMean +- std per method x model:")
     summary = df.groupby(['method', 'model'])[['accuracy', 'f1_score', 'auc_roc']].agg(['mean', 'std']).round(4)
     print(summary)
 

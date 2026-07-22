@@ -26,42 +26,26 @@ from core.traditional import run_traditional_experiment
 
 
 def main():
-    # ============================================================
-    # Experiment configuration — edit here to change what runs
-    # ============================================================
     DATASET = 'iris'
     METHODS = ['svm', 'random_forest', 'knn', 'decision_tree', 'xgboost']
 
-    # ============================================================
-    # 1. Load data
-    # ============================================================
-    print(f"\n{'='*60}")
-    print(f"Dataset : {DATASET}")
-    print(f"Methods : {METHODS}")
-    print(f"Folds   : {Config.N_FOLDS}")
-    print(f"Seed    : {Config.SEED}")
-    print(f"{'='*60}")
+    print(f"\nDataset: {DATASET}  Methods: {METHODS}")
+    print(f"Folds: {Config.N_FOLDS}  Seed: {Config.SEED}")
 
     X, y, feature_names, target_names = load_dataset(DATASET)
 
     Config.create_dirs()
 
-    # ============================================================
-    # 2. Load existing results and build skip-set
-    # ============================================================
     results_csv = Config.RESULTS_DIR / f'{DATASET}_traditional.csv'
     done = set()
 
     if results_csv.exists():
         df_existing = pd.read_csv(results_csv)
-        done = set(df_existing['model'].unique())  # 'model' column = method name
-        print(f"\nFound {len(done)} completed method(s) — will skip")
+        done = set(df_existing['model'].unique())
+        print(f"Found {len(done)} completed method(s), will skip")
 
-    # ============================================================
-    # 3. Loop over traditional methods
-    # ============================================================
     total = len(METHODS)
-    print(f"Total methods: {total}  |  Already done: {len(done)}\n")
+    print(f"Total: {total}  Done: {len(done)}\n")
 
     all_results = []
     count = 0
@@ -70,10 +54,9 @@ def main():
         count += 1
 
         if method in done:
-            print(f"[{count}/{total}] {method} → skip")
+            print(f"[{count}/{total}] {method}  skip")
             continue
 
-        # --- Run 5-fold CV for one method ---
         print(f"\n[{count}/{total}] {method}")
         try:
             fold_results = run_traditional_experiment(
@@ -83,7 +66,6 @@ def main():
                 seed=Config.SEED
             )
 
-            # Only keep columns that match transfer results CSV schema
             for r in fold_results:
                 all_results.append({
                     'fold': r['fold'],
@@ -95,20 +77,14 @@ def main():
                 })
 
         except Exception as e:
-            print(f"  ERROR: {e}")
+            print(f"ERROR: {e}")
 
-        # Write after every method so a crash preserves earlier work
         pd.DataFrame(all_results).to_csv(results_csv, index=False)
 
-    # ============================================================
-    # 4. Print summary
-    # ============================================================
-    print(f"\n{'='*60}")
-    print(f"Done! Results saved to: {results_csv}")
-    print(f"{'='*60}")
+    print(f"\nDone: {results_csv}")
 
     df = pd.read_csv(results_csv)
-    print("\nSummary (mean ± std per method):")
+    print("\nMean ± std per method:")
     summary = df.groupby('model')[['accuracy', 'f1_score', 'auc_roc']].agg(['mean', 'std']).round(4)
     print(summary)
 
