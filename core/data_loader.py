@@ -207,26 +207,26 @@ def generate_tinto_images_for_fold(X_train, y_train, X_val, y_val,
 
     # Generate training images
     train_img_folder = images_folder / 'train'
-    train_img_folder.mkdir(exist_ok=True)
+    train_img_folder.mkdir(parents=True, exist_ok=True)
 
-    if not (train_img_folder / 'supervised.csv').exists():
+    if not (train_img_folder / 'classification.csv').exists():
         print(f"  → Generating training images (Fold {fold_idx})...")
         tinto_model.fit_transform(train_df, str(train_img_folder))
 
     # Generate validation images
     val_img_folder = images_folder / 'val'
-    val_img_folder.mkdir(exist_ok=True)
+    val_img_folder.mkdir(parents=True, exist_ok=True)
 
-    if not (val_img_folder / 'supervised.csv').exists():
+    if not (val_img_folder / 'classification.csv').exists():
         print(f"  → Generating validation images (Fold {fold_idx})...")
         tinto_model.transform(val_df, str(val_img_folder))
 
     # Read and update image paths
-    train_img_paths = pd.read_csv(train_img_folder / 'supervised.csv')
+    train_img_paths = pd.read_csv(train_img_folder / 'classification.csv')
     train_img_paths['images'] = train_img_paths['images'].apply(
         lambda x: str(train_img_folder / x))
 
-    val_img_paths = pd.read_csv(val_img_folder / 'supervised.csv')
+    val_img_paths = pd.read_csv(val_img_folder / 'classification.csv')
     val_img_paths['images'] = val_img_paths['images'].apply(
         lambda x: str(val_img_folder / x))
 

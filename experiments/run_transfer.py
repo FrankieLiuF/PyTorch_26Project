@@ -5,9 +5,6 @@ Loops over transformation methods × CNN models × cross-validation folds,
 trains each combination, and saves results incrementally to CSV.
 Re-running automatically skips combinations that already have results.
 
-Usage:
-    python experiments/run_transfer.py
-
 Configuration:
     Edit the variables at the top of main() to control datasets, methods,
     models, and training parameters.

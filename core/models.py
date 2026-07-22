@@ -117,7 +117,13 @@ def get_available_models():
 def _get_feature_dim(model, classifier_name):
     if classifier_name == 'classifier':
         if isinstance(model.classifier, nn.Sequential):
-            return model.classifier[-1].in_features
+            # Find the FIRST Linear layer's in_features.
+            # Using [-1] breaks MobileNet which has Linear(960,1280)+Linear(1280,1000)
+            # — we'd get 1280 but the backbone actually outputs 960.
+            for layer in model.classifier:
+                if isinstance(layer, nn.Linear):
+                    return layer.in_features
+            raise ValueError('No Linear layer found in classifier Sequential')
         else:
             return model.classifier.in_features
     elif classifier_name == 'fc':
