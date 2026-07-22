@@ -1,0 +1,106 @@
+{
+  "dataset": {
+    "name": "boston",
+    "path": "Dataset/Regression/boston.csv",
+    "target": "MEDV",
+    "problem": "regression",
+    "sample": {
+      "strategy": "random",
+      "n_rows": 120
+    }
+  },
+  "split": {
+    "enabled": true,
+    "test_size": 0.25,
+    "random_state": 64,
+    "stratify": false
+  },
+  "output": {
+    "root": "SyntheticImages/ClustersTesting",
+    "overwrite": true
+  },
+  "base_params": {
+    "problem": "regression",
+    "normalize": false,
+    "verbose": false
+  },
+  "cases": [
+    {
+      "name": "kmeans_elkan",
+      "params": {
+        "algorithm": "kmeans",
+        "n_clusters": 9,
+        "random_seed": 64,
+        "n_init": 2,
+        "max_iter": 100,
+        "algorithmMethod": "elkan",
+        "RBFKmeans": false
+      }
+    },
+    {
+      "name": "gaussian_mix_tied",
+      "params": {
+        "algorithm": "gaussianMix",
+        "n_clusters": 9,
+        "random_seed": 64,
+        "n_init": 2,
+        "max_iter": 100,
+        "covariance_type": "tied"
+      }
+    },
+    {
+      "name": "agglo_knn_manhattan",
+      "params": {
+        "algorithm": "aggloKNN",
+        "n_clusters": 9,
+        "metric": "manhattan"
+      }
+    },
+    {
+      "name": "kde_cosine",
+      "params": {
+        "algorithm": "kde",
+        "bandwidth": 0.75,
+        "kernel": "cosine",
+        "metric": "euclidean"
+      }
+    },
+    {
+      "name": "kmedoids_chebyshev",
+      "params": {
+        "algorithm": "kmedoids",
+        "n_clusters": 9,
+        "random_seed": 64,
+        "max_iter": 60,
+        "metric": "chebyshev"
+      }
+    },
+    {
+      "name": "factor_analysis",
+      "params": {
+        "algorithm": "factor",
+        "n_clusters": 6,
+        "random_seed": 64
+      }
+    },
+    {
+      "name": "mix_method_rgb",
+      "params": {
+        "algorithm": "mixMethod",
+        "n_clusters": 9,
+        "random_seed": 64,
+        "n_init": 2,
+        "max_iter": 100,
+        "algorithmMethod": "lloyd",
+        "covariance_type": "spherical",
+        "ensamMethod": [
+          "kmeans",
+          "gaussianMix",
+          "kmedoids"
+        ],
+        "metric": "euclidean",
+        "RBFKmeans": true
+      }
+    }
+  ]
+}

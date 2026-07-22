@@ -1,0 +1,107 @@
+{
+  "dataset": {
+    "name": "iris",
+    "path": "Dataset/Multiclass/iris.csv",
+    "target": "Species",
+    "problem": "classification",
+    "sample": {
+      "strategy": "stratified",
+      "rows_per_class": 15
+    }
+  },
+  "split": {
+    "enabled": true,
+    "test_size": 0.25,
+    "random_state": 64,
+    "stratify": true
+  },
+  "output": {
+    "root": "SyntheticImages/ClustersTesting",
+    "overwrite": true
+  },
+  "base_params": {
+    "problem": "classification",
+    "normalize": true,
+    "verbose": false
+  },
+  "cases": [
+    {
+      "name": "kmeans_lloyd_rbf",
+      "params": {
+        "algorithm": "kmeans",
+        "n_clusters": 4,
+        "random_seed": 64,
+        "n_init": 2,
+        "max_iter": 100,
+        "algorithmMethod": "lloyd",
+        "RBFKmeans": true,
+        "verbose": true
+      }
+    },
+    {
+      "name": "gaussian_mix_diag",
+      "params": {
+        "algorithm": "gaussianMix",
+        "n_clusters": 4,
+        "random_seed": 64,
+        "n_init": 2,
+        "max_iter": 100,
+        "covariance_type": "diag"
+      }
+    },
+    {
+      "name": "agglo_knn_cosine",
+      "params": {
+        "algorithm": "aggloKNN",
+        "n_clusters": 4,
+        "metric": "cosine"
+      }
+    },
+    {
+      "name": "kde_epanechnikov",
+      "params": {
+        "algorithm": "kde",
+        "bandwidth": 0.5,
+        "kernel": "epanechnikov",
+        "metric": "euclidean"
+      }
+    },
+    {
+      "name": "kmedoids_manhattan",
+      "params": {
+        "algorithm": "kmedoids",
+        "n_clusters": 4,
+        "random_seed": 64,
+        "max_iter": 60,
+        "metric": "manhattan"
+      }
+    },
+    {
+      "name": "factor_analysis",
+      "params": {
+        "algorithm": "factor",
+        "n_clusters": 3,
+        "random_seed": 64
+      }
+    },
+    {
+      "name": "mix_method_rgb",
+      "params": {
+        "algorithm": "mixMethod",
+        "n_clusters": 4,
+        "random_seed": 64,
+        "n_init": 2,
+        "max_iter": 100,
+        "algorithmMethod": "elkan",
+        "covariance_type": "full",
+        "ensamMethod": [
+          "kmeans",
+          "gaussianMix",
+          "aggloKNN"
+        ],
+        "metric": "manhattan",
+        "RBFKmeans": false
+      }
+    }
+  ]
+}

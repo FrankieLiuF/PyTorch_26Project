@@ -1,0 +1,216 @@
+- dataset: adult
+  meta:
+    task: binary
+    target: class
+    sample_size: 48842
+    n_features: 14
+    n_num_features: 6
+    n_cat_features: 8
+    categorical_pct: 0.0
+    missing_pct: 0.9454684785342825
+    n_classes: 2
+    imbalance_ratio: 3.179173440574998
+    source: https://api.openml.org/data/v1/download/1595261/adult.arff
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 0.87561 ± 0.00119
+    primary_mean: 0.87561
+    secondary_raw: 0.93126 ± 0.00019
+    secondary_mean: 0.93126
+  best_transformed:
+    family: ViT
+    best_variant: SuperTML
+    primary_raw: 0.87359 ± 0.00136
+    primary_mean: 0.87359
+    secondary_raw: 0.92914 ± 0.00167
+    secondary_mean: 0.92914
+- dataset: Bioresponse
+  meta:
+    task: binary
+    target: target
+    sample_size: 3751
+    n_features: 1776
+    n_num_features: 1776
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 2
+    imbalance_ratio: 1.1846243447874198
+    source: https://api.openml.org/data/v1/download/1681097/Bioresponse.arff
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 0.81847 ± 0.00477
+    primary_mean: 0.81847
+    secondary_raw: 0.88961 ± 0.00122
+    secondary_mean: 0.88961
+  best_transformed:
+    family: CNN
+    best_variant: REFINED
+    primary_raw: 0.79183 ± 0.01769
+    primary_mean: 0.79183
+    secondary_raw: 0.85621 ± 0.00549
+    secondary_mean: 0.85621
+- dataset: credit-approval
+  meta:
+    task: binary
+    target: class
+    sample_size: 690
+    n_features: 15
+    n_num_features: 6
+    n_cat_features: 9
+    categorical_pct: 0.0
+    missing_pct: 0.6473429951690821
+    n_classes: 2
+    imbalance_ratio: 1.247557003257329
+    source: https://api.openml.org/data/v1/download/29/credit-approval.arff
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 0.88462 ± 0.00000
+    primary_mean: 0.88462
+    secondary_raw: 0.94858 ± 0.00155
+    secondary_mean: 0.94858
+  best_transformed:
+    family: ViT
+    best_variant: FeatureWrap
+    primary_raw: 0.89808 ± 0.03010
+    primary_mean: 0.89808
+    secondary_raw: 0.95735 ± 0.00327
+    secondary_mean: 0.95735
+- dataset: dengue_chikunguya_bin
+  meta:
+    task: binary
+    target: CLASSI_FIN
+    sample_size: null
+    n_features: N/A
+    n_num_features: 2
+    n_cat_features: 24
+    categorical_pct: 0.0
+    missing_pct: N/A
+    n_classes: 2
+    imbalance_ratio: null
+    source: https://data.mendeley.com/datasets/bv26kznkjs/1
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 0.77381 ± 0.00152
+    primary_mean: 0.77381
+    secondary_raw: 0.84859 ± 0.00078
+    secondary_mean: 0.84859
+  best_transformed:
+    family: CNN+MLP
+    best_variant: SuperTML
+    primary_raw: 0.76577 ± 0.00374
+    primary_mean: 0.76577
+    secondary_raw: 0.83457 ± 0.00086
+    secondary_mean: 0.83457
+- dataset: nomao
+  meta:
+    task: binary
+    target: Class
+    sample_size: 34465
+    n_features: 118
+    n_num_features: 89
+    n_cat_features: 29
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 2
+    imbalance_ratio: 2.5011174319382365
+    source: https://api.openml.org/data/v1/download/1486/nomao.arff
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 0.97033 ± 0.00082
+    primary_mean: 0.97033
+    secondary_raw: 0.99467 ± 0.00018
+    secondary_mean: 0.99467
+  best_transformed:
+    family: CNN+MLP
+    best_variant: BIE
+    primary_raw: 0.96549 ± 0.00095
+    primary_mean: 0.96549
+    secondary_raw: 0.99383 ± 0.00052
+    secondary_mean: 0.99383
+- dataset: preprocessed_heloc
+  meta:
+    task: binary
+    target: N/A
+    sample_size: N/A
+    n_features: N/A
+    n_num_features: N/A
+    n_cat_features: N/A
+    categorical_pct: 0.0
+    missing_pct: N/A
+    n_classes: N/A
+    imbalance_ratio: N/A
+    source: N/A
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 0.73153 ± 0.00194
+    primary_mean: 0.73153
+    secondary_raw: 0.79220 ± 0.00038
+    secondary_mean: 0.7922
+  best_transformed:
+    family: ViT
+    best_variant: BarGraph
+    primary_raw: 0.72856 ± 0.00239
+    primary_mean: 0.72856
+    secondary_raw: 0.78951 ± 0.00144
+    secondary_mean: 0.78951
+- dataset: qsar-biodeg
+  meta:
+    task: binary
+    target: Class
+    sample_size: 1055
+    n_features: 41
+    n_num_features: 41
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 2
+    imbalance_ratio: 1.9634831460674158
+    source: https://api.openml.org/data/v1/download/1494/qsar-biodeg.arff
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 0.84528 ± 0.00954
+    primary_mean: 0.84528
+    secondary_raw: 0.90328 ± 0.00679
+    secondary_mean: 0.90328
+  best_transformed:
+    family: CNN+MLP
+    best_variant: REFINED
+    primary_raw: 0.85912 ± 0.01052
+    primary_mean: 0.85912
+    secondary_raw: 0.90952 ± 0.00963
+    secondary_mean: 0.90952
+- dataset: sick
+  meta:
+    task: binary
+    target: Class
+    sample_size: 3772
+    n_features: 29
+    n_num_features: 7
+    n_cat_features: 22
+    categorical_pct: 0.0
+    missing_pct: 0.053587840226228346
+    n_classes: 2
+    imbalance_ratio: 15.329004329004329
+    source: https://api.openml.org/data/v1/download/38/sick.arff
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 0.99470 ± 0.00000
+    primary_mean: 0.9947
+    secondary_raw: 0.99956 ± 0.00006
+    secondary_mean: 0.99956
+  best_transformed:
+    family: ViT
+    best_variant: REFINED
+    primary_raw: 0.99046 ± 0.00443
+    primary_mean: 0.99046
+    secondary_raw: 0.99864 ± 0.00083
+    secondary_mean: 0.99864
