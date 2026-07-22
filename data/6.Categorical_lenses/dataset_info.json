@@ -1,0 +1,26 @@
+{
+    "name": "lenses",
+    "type": "Categorical",
+    "samples": 24,
+    "features": 10,
+    "classes": 3,
+    "class_names": [
+        "hard",
+        "soft",
+        "no contact lenses"
+    ],
+    "feature_names": [
+        "astigmaticage",
+        "age_0",
+        "age_1",
+        "age_2",
+        "spectacle_prescription_0",
+        "spectacle_prescription_1",
+        "astigmatic_1",
+        "astigmatic_2",
+        "tear_production_rate_0",
+        "tear_production_rate_1"
+    ],
+    "has_header": true,
+    "target_column": "target"
+}

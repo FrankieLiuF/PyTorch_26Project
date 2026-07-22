@@ -1,0 +1,20 @@
+{
+    "name": "iris",
+    "type": "numerical",
+    "samples": 150,
+    "feature": 4,
+    "classes": 3,
+    "class_names": [
+        "Iris-setosa",
+        "Iris-versicolor",
+        "Iris-virginica"
+    ],
+    "feature_names": [
+        "sepal_length",
+        "sepal_width",
+        "petal_length",
+        "petal_width"
+    ],
+    "has_header": true,
+    "target_column": "target"
+}

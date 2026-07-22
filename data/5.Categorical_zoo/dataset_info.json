@@ -1,0 +1,45 @@
+{
+    "name": "zoo",
+    "type": "categorical",
+    "samples": 101,
+    "features": 21,
+    "classes": 7,
+    "class_names": [
+        "Class_1",
+        "Class_2",
+        "Class_3",
+        "Class_4",
+        "Class_5",
+        "Class_6",
+        "Class_7"
+    ],
+    "feature_names": [
+        "hair",
+        "feathers",
+        "eggs",
+        "milk",
+        "airborne",
+        "aquatic",
+        "predator",
+        "toothed",
+        "backbone",
+        "breathes",
+        "venomous",
+        "fins",
+        "tail",
+        "domestic",
+        "catsize",
+        "legs_0",
+        "legs_2",
+        "legs_4",
+        "legs_5",
+        "legs_6",
+        "legs_8"
+    ],
+    "has_header": true,
+    "target_column": "target",
+    "categorical_features": [],
+    "numerical_features": [
+        "legs"
+    ]
+}
