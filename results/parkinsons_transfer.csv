@@ -39,3 +39,7 @@ fold,method,model,accuracy,f1_score,auc_roc
 2,igtd,densenet161,0.7692,0.6903,0.9897
 3,igtd,densenet161,0.7436,0.6342,0.5
 4,igtd,densenet161,0.7949,0.7389,0.9414
+0,supertml,efficientnet_v2_m,0.7692,0.6689,0.4556
+1,supertml,efficientnet_v2_m,0.7949,0.7249,0.6556
+2,supertml,efficientnet_v2_m,0.7436,0.6342,0.4414
+3,supertml,efficientnet_v2_m,0.7436,0.6342,0.4966
