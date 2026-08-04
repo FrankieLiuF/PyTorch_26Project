@@ -20,3 +20,18 @@ Thumbs.db
 
 # Paper PDF (not code)
 *.pdf
+
+# Meeting notes (personal)
+scripts/meeting_notes_*.md
+
+# Model checkpoints (large binary files)
+*.pth
+
+# Office temp files
+~$*
+
+# Screenshots and random images in project root (personal)
+/snip.png
+/*.png
+/*.jpg
+/*.jpeg

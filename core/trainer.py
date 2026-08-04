@@ -10,6 +10,7 @@ Functions:
 
 import time
 import copy
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -55,6 +56,7 @@ def get_fold_dataloaders(X, y,
         feature_names=feature_names
     )
 
+    # Extract the current fold's data from the 5-fold dictionary
     fold_data = tinto_data[f'fold_{fold_idx}']
 
     # Get input_size from model config
@@ -148,6 +150,7 @@ def evaluate_epoch(model, dataloader, criterion, device):
             loss = criterion(outputs, labels)
 
             running_loss += loss.item()
+            # Convert logits to class probabilities for AUC-ROC computation
             probs = torch.softmax(outputs, dim=1)        # probabilities for AUC-ROC
             _, predicted = torch.max(outputs.data, 1)
 
@@ -204,6 +207,7 @@ def train_transfer_learning(X, y, fold_idx=0, epochs=50, method_name='tinto',
     model = get_model(model_name, Config.NUM_CLASSES, device)
 
     # Setup optimizer with differential learning rates
+    # Default: freeze backbone weights, train only the classifier head on top
     if fine_tune_all:
         # Fine-tune all layers: lower LR for backbone, higher LR for classifier
         for param in model.parameters():
@@ -227,7 +231,7 @@ def train_transfer_learning(X, y, fold_idx=0, epochs=50, method_name='tinto',
             param.requires_grad = False
 
         # Use the correct classifier attribute name for this model
-        # (ResNeXt uses 'fc', others use 'classifier')
+        # ResNeXt uses 'fc', all other models use 'classifier'
         classifier_attr = get_model_config(model_name)['classifier_name']
         classifier = getattr(model, classifier_attr)
         for param in classifier.parameters():
@@ -238,7 +242,7 @@ def train_transfer_learning(X, y, fold_idx=0, epochs=50, method_name='tinto',
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
 
-    # Learning rate scheduler
+    # Halve learning rate when validation accuracy stalls for 5 epochs
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode='max', factor=0.5, patience=5
     )
@@ -255,7 +259,7 @@ def train_transfer_learning(X, y, fold_idx=0, epochs=50, method_name='tinto',
     patience_counter = 0
     early_stop_patience = 10  # Stop if no improvement for 10 consecutive epochs
 
-    # Training loop
+    # Train for fixed epochs, early stopping disabled for fair fold comparison
     for epoch in range(epochs):
         start_time = time.time()
 
@@ -268,7 +272,7 @@ def train_transfer_learning(X, y, fold_idx=0, epochs=50, method_name='tinto',
         history['val_acc'].append(val_acc)
         history['lr'].append(optimizer.param_groups[0]['lr'])
 
-        # save best model
+        # save best model based on validation accuracy
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             best_model_state = copy.deepcopy(model.state_dict())  # True deep copy — safe against future mutations
@@ -283,6 +287,8 @@ def train_transfer_learning(X, y, fold_idx=0, epochs=50, method_name='tinto',
               f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f} | "
               f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
 
+        # Early stopping intentionally disabled: all folds must run equal epochs
+        # for a fair comparison across methods and models
         # # Early stopping
         # if patience_counter >= early_stop_patience:
         #     print(f"  Early stopping at epoch {epoch+1}")
@@ -296,10 +302,16 @@ def train_transfer_learning(X, y, fold_idx=0, epochs=50, method_name='tinto',
         model, val_loader, criterion, device
     )
 
-    # Compute F1 and AUC-ROC (multi-class one-vs-rest)
+    # Compute F1 and AUC-ROC
     best_f1 = f1_score(best_labels, best_preds, average='weighted')
     try:
-        best_auc = roc_auc_score(best_labels, best_probs, multi_class='ovr', average='weighted')
+        best_probs = np.array(best_probs)
+        # Binary: use positive-class probability; Multi-class: one-vs-rest
+        if best_probs.shape[1] == 2:
+            best_auc = roc_auc_score(best_labels, best_probs[:, 1])
+        else:
+            best_auc = roc_auc_score(best_labels, best_probs, 
+                                     multi_class='ovr', average='weighted')
     except ValueError:
         best_auc = float('nan')  # Some folds may have only 1 sample of a class
 

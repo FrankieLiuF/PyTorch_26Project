@@ -121,7 +121,7 @@ def perform_wilcoxon_tests(df, metric='accuracy', group_by='method'):
             continue
 
         # Check if all fold index matches
-        if not (df1['fold'].values == df2['fold'].values.all()):
+        if not (df1['fold'].values == df2['fold'].values).all():
             continue
         
         try:

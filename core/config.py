@@ -23,7 +23,8 @@ class Config:
         'hepatitis': '3.Mixed_hepatitis',
         'acute_inflammations': '4.Mixed_acute_inflammations',
         'zoo': '5.Categorical_zoo',
-        'lenses': '6.Categorical_lenses',
+        'hayes_roth': '6.Categorical_hayes_roth',
+        #'lenses': '6.Categorical_lenses',
     }
 
     OUTPUT_DIR = PROJECT_ROOT / 'output'
@@ -33,7 +34,7 @@ class Config:
     # Training parameters
     IMG_SIZE = 20        # TINTO image size (library default, see SoftwareX 2025)
     INPUT_SIZE = 224     # EfficientNet input size
-    NUM_CLASSES = 3      # number of classes in the dataset (Iris)
+    NUM_CLASSES = 3      # default number of classes, overridden at runtime by each experiment
     EPOCHS = 50          # Training epochs
     BATCH_SIZE = 16      # Batch size
     LEARNING_RATE = 1e-4 # Learning rate
@@ -58,7 +59,8 @@ class Config:
         'hepatitis': 'mixed',
         'acute_inflammations': 'mixed',
         'zoo': 'categorical',
-        'lenses': 'categorical',        
+        'hayes_roth': 'categorical',
+        #'lenses': 'categorical',        
     }
 
     # Methods for comparison
@@ -84,8 +86,9 @@ class Config:
     TRADITIONAL_METHODS = [
         'svm',
         'random_forest',
-        'xgboost',
         'knn',
+        'decision_tree',
+        'xgboost',
     ]
 
     # Primary Metrics
@@ -104,6 +107,7 @@ class Config:
     # All metrics to record (primary + detailed for analysis)
     ALL_METRICS = PRIMARY_METRICS + ['recall', 'precision']
 
+    # @classmethod allows calling Config.get_data_dir() without creating a Config instance
     @classmethod
     def get_data_dir(cls, dataset_name=None):
         """

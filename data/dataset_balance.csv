@@ -1,0 +1,7 @@
+dataset,balanced,class_distribution
+iris,Y,50/50/50
+parkinsons,N,48/147
+hepatitis,N,32/123
+acute_inflammations,Y,61/59
+zoo,N,41/20/5/13/4/8/10
+hayes_roth,N,65/64/31

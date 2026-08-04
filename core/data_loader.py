@@ -22,6 +22,7 @@ from TINTOlib.refined import REFINED
 from TINTOlib.barGraph import BarGraph
 from TINTOlib.distanceMatrix import DistanceMatrix
 from TINTOlib.combination import Combination
+from TINTOlib.deepInsight import DeepInsight
 
 from .config import Config
 
@@ -41,6 +42,8 @@ def load_dataset(dataset_name):
         target_names: List of class names 
     """
     # locate file — use dynamic lookup so every dataset finds its own folder
+    # Set the dataset name so image cache paths become dataset-specific
+    Config.DATASET_NAME = dataset_name
     folder_path = Config.get_data_dir(dataset_name)
     csv_path = folder_path / f"{dataset_name}.csv"
     info_path = folder_path / "dataset_info.json"
@@ -103,6 +106,7 @@ def get_tinto_method(method_name='tinto'):
     Returns:
         TINTO method instance 
     """
+    # Registry of all available TINTOlib image transformation methods
     methods = {
         'tinto': {
             'class': TINTO,
@@ -137,6 +141,11 @@ def get_tinto_method(method_name='tinto'):
         'bargraph': {
             'class': BarGraph,
             'params': {'problem': 'classification', 'zoom': 1}  # default zoom=1
+        },
+        'deepinsight': {
+            'class': DeepInsight,
+            'params': {'problem': 'classification', 'image_dim': 20,
+                       'random_seed': Config.SEED}
         },
         'distancematrix': {
             'class': DistanceMatrix,
@@ -209,6 +218,7 @@ def generate_tinto_images_for_fold(X_train, y_train, X_val, y_val,
     train_img_folder = images_folder / 'train'
     train_img_folder.mkdir(parents=True, exist_ok=True)
 
+    # Skip if images already cached (checked per dataset/method/fold)
     if not (train_img_folder / 'classification.csv').exists():
         print(f"  → Generating training images (Fold {fold_idx})...")
         tinto_model.fit_transform(train_df, str(train_img_folder))
@@ -265,6 +275,7 @@ def create_5fold_tinto_images(X, y, method_name='tinto', standardize=True,
     print(f"Standardize data: {standardize}")
     print("-" * 50)
 
+    # Iterate over 5 stratified folds: each sample appears in validation exactly once
     for fold_idx, (train_idx, val_idx) in enumerate(skf.split(X, y)):
         print(f"\nFold {fold_idx + 1}/{Config.N_FOLDS}:")
 

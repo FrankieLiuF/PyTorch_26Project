@@ -38,7 +38,7 @@ class TINTOImageDataset(Dataset):
         return len(self.image_paths)
 
     def __getitem__(self, idx):
-        # Read image in RGB format
+        # Read image from disk and convert OpenCV BGR to PIL-compatible RGB
         img_path = self.image_paths[idx]
         image = cv2.imread(img_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # BGR to RGB for pretrained models

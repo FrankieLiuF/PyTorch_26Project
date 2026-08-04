@@ -1,0 +1,31 @@
+{
+    "name": "hayes_roth",
+    "type": "Categorical",
+    "samples": 160,
+    "features": 15,
+    "classes": 3,
+    "class_names": [
+        "Class_1",
+        "Class_2",
+        "Class_Neither"
+    ],
+    "feature_names": [
+        "hobby_0",
+        "hobby_1",
+        "hobby_2",
+        "age_0",
+        "age_1",
+        "age_2",
+        "age_3",
+        "educational_level_0",
+        "educational_level_1",
+        "educational_level_2",
+        "educational_level_3",
+        "marital_status_0",
+        "marital_status_1",
+        "marital_status_2",
+        "marital_status_3"
+    ],
+    "has_header": true,
+    "target_column": "target"
+}

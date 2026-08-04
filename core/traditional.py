@@ -47,6 +47,7 @@ def run_traditional_experiment(X, y,
     Returns:
         list: Results for each fold 
     """
+    # Register of scikit-learn classifiers with fixed parameters for fair comparison
     models = {
         'svm': SVC(kernel='rbf', probability=True, random_state=seed),
         'random_forest': RandomForestClassifier(n_estimators=100, random_state=seed),
@@ -87,10 +88,14 @@ def run_traditional_experiment(X, y,
         acc = accuracy_score(y_val, y_pred)
         f1 = f1_score(y_val, y_pred, average='weighted')
 
-        # AUC-ROC (multi-class one-vs-rest) — requires predict_proba
+        # Binary: positive-class probability. Multi-class: one-vs-rest AUROC
+        # AUC-ROC: binary uses positive-class prob, multi-class uses one-vs-rest
         try:
             y_proba = model.predict_proba(X_val)
-            auc = roc_auc_score(y_val, y_proba, multi_class='ovr', average='weighted')
+            if y_proba.shape[1] == 2:
+                auc = roc_auc_score(y_val, y_proba[:, 1])
+            else:
+                auc = roc_auc_score(y_val, y_proba, multi_class='ovr', average='weighted')
         except (AttributeError, ValueError):
             auc = float('nan')
 
@@ -101,8 +106,8 @@ def run_traditional_experiment(X, y,
             'accuracy': acc,
             'f1_score': f1,
             'auc_roc': auc,
-            'recall': recall_score(y_val, y_pred, average='weighted'),
-            'precision': precision_score(y_val, y_pred, average='weighted'),
+            'recall': recall_score(y_val, y_pred, average='weighted', zero_division=0),
+            'precision': precision_score(y_val, y_pred, average='weighted', zero_division=0),
             'confusion_matrix': confusion_matrix(y_val, y_pred).tolist(),
             'seed': seed
         })

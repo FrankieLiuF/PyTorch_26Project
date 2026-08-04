@@ -11,7 +11,7 @@ Functions:
     5. _replace_classifier
 """
 import sys
-print(sys.executable)
+# print(sys.executable)
 import torch.nn as nn
 from torchvision.models import (
     efficientnet_v2_m, EfficientNet_V2_M_Weights, # V1
@@ -22,8 +22,8 @@ from torchvision.models import (
 
 from .config import Config
 
-# Model Configuration Dictionary
-# feature_dim is dynamically obtained in get_model()
+# Registry of pretrained CNN models with their weight sources and classifier names
+# The feature_dim (input to classifier) is detected dynamically in get_model()
 MODEL_CONFIGS = {
     'efficientnet_v2_m': {
         'weights': EfficientNet_V2_M_Weights.IMAGENET1K_V1,
@@ -76,10 +76,10 @@ def get_model(model_name, num_classes=None, device='cpu'):
 
     config = MODEL_CONFIGS[model_name]
 
-    # Build the original model with pretrained weights
+    # Build model with pretrained ImageNet weights (transfer learning)
     model = config['builder'](weights=config['weights'])
 
-    # Dynamically obtain feature_dim
+    # Detect the input dimension of the classifier head to be replaced
     classifier_name = config['classifier_name']
     feature_dim = _get_feature_dim(model, classifier_name)
 
@@ -117,9 +117,9 @@ def get_available_models():
 def _get_feature_dim(model, classifier_name):
     if classifier_name == 'classifier':
         if isinstance(model.classifier, nn.Sequential):
-            # Find the FIRST Linear layer's in_features.
-            # Using [-1] breaks MobileNet which has Linear(960,1280)+Linear(1280,1000)
-            # — we'd get 1280 but the backbone actually outputs 960.
+            # Find the FIRST Linear layer's in_features, not the last.
+            # MobileNet's classifier is Linear(960,1280)+Linear(1280,1000):
+            # using the last layer would give 1280, but the backbone outputs 960.
             for layer in model.classifier:
                 if isinstance(layer, nn.Linear):
                     return layer.in_features
@@ -134,7 +134,7 @@ def _get_feature_dim(model, classifier_name):
 # Replace the classifier layer with a new one for the target number of classes
 def _replace_classifier(model, classifier_name, feature_dim, num_classes):
     if classifier_name == 'classifier':
-        # preserve the original dropout rate if possible
+        # Preserve the original dropout rate from the pretrained model
         dropout_rate = 0.2
         if isinstance(model.classifier, nn.Sequential):
             for layer in model.classifier:
