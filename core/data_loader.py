@@ -10,6 +10,7 @@ Functions:
 
 import pandas as pd
 import numpy as np
+import math
 import json
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler, LabelEncoder
@@ -136,7 +137,8 @@ def get_tinto_method(method_name='tinto'):
         },
         'refined': {
             'class': REFINED,
-            'params': {'problem': 'classification', 'random_seed': Config.SEED}
+            'params': {'problem': 'classification', 
+                       'random_seed': Config.SEED}
         },
         'bargraph': {
             'class': BarGraph,
@@ -144,7 +146,8 @@ def get_tinto_method(method_name='tinto'):
         },
         'deepinsight': {
             'class': DeepInsight,
-            'params': {'problem': 'classification', 'image_dim': 20,
+            'params': {'problem': 'classification', 
+                       'image_dim': 20,
                        'random_seed': Config.SEED}
         },
         'distancematrix': {
@@ -213,6 +216,11 @@ def generate_tinto_images_for_fold(X_train, y_train, X_val, y_val,
 
     # Get TINTO model
     tinto_model = get_tinto_method(method_name)
+
+    # Default: Characteristic pixels of the final image (row x col). [row x col] must be equal or greater than the number of features.
+    if method_name == 'igtd':
+        dim = math.ceil(math.sqrt(X_train.shape[1]))
+        tinto_model.scale = [dim, dim]
 
     # Generate training images
     train_img_folder = images_folder / 'train'

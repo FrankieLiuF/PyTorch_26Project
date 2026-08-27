@@ -19,3 +19,8 @@ fold,method,model,accuracy,f1_score,auc_roc
 2,traditional,decision_tree,1.0,1.0,1.0
 3,traditional,decision_tree,0.95,0.9333,0.9737
 4,traditional,decision_tree,0.85,0.8467,0.9196
+0,traditional,xgboost,0.9524,0.9365,1.0
+1,traditional,xgboost,1.0,1.0,NaN
+2,traditional,xgboost,0.95,0.9333,1.0
+3,traditional,xgboost,0.95,0.9286,1.0
+4,traditional,xgboost,1.0,1.0,1.0

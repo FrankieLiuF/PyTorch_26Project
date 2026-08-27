@@ -1,0 +1,7 @@
+dataset,metric,best_transfer,best_traditional,mean_transfer,mean_traditional,wilcoxon_p
+iris,accuracy,supertml+resnext50_32x4d,knn,0.886600,0.973300,0.125000
+parkinsons,accuracy,igtd+densenet161,xgboost,0.918000,0.928200,1.000000
+hepatitis,accuracy,deepinsight+mobilenet_v3_large,knn,0.819400,0.845200,0.625000
+acute_inflammations,accuracy,deepinsight+densenet161,knn,1.000000,1.000000,1.000000
+zoo,accuracy,refined+resnext50_32x4d,random_forest,0.791900,0.980000,0.062500
+hayes_roth,accuracy,supertml+densenet161,svm,0.718800,0.831300,0.125000

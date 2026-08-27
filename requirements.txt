@@ -1,1 +1,27 @@
-# 依赖列表
+# Core dependencies (pinned to match TINTOlib's tested versions)
+bitstring==4.3.0
+matplotlib==3.9.4
+numpy==1.26.4
+pandas==2.2.3
+scikit-learn==1.6.1
+opencv-python==4.11.0.86
+scipy==1.15.0
+tqdm==4.67.1
+asymmetric-greedy-search==0.1.0
+numba==0.62.0
+
+# Deep learning
+torch==2.2.2
+torchvision==0.17.2
+
+# Traditional ML baselines
+xgboost==3.2.0
+
+# Experiment analysis
+scikit-posthocs
+
+# REFINED method (MPI-based hill climbing via subprocess)
+mpi4py
+
+# NOTE: TINTOlib is NOT installed from this file. The project uses the
+# local TINTOlib/ directory. Do not pip install TINTOlib separately.

@@ -1,13 +1,16 @@
 """
-Batch experiment runner for transfer learning with TINTOlib image methods.
+Ablation runner for the image normalization choice.
 
-Loops over transformation methods × CNN models × cross-validation folds,
-trains each combination, and saves results incrementally to CSV.
-Re-running automatically skips combinations that already have results.
+Same grid as run_transfer.py (methods x models x folds) but trains with
+use_simple_norm=True, i.e. mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5] instead
+of the ImageNet statistics. Results go to a separate CSV
+({dataset}_transfer_simplenorm.csv) so the main results stay untouched.
+
+At the end it prints a comparison against the ImageNet-normalized CSV
+if it exists: per-combination delta and overall win/loss/tie counts.
 
 Configuration:
-    Edit the variables at the top of main() to control datasets, methods,
-    models, and training parameters.
+    Edit DATASET at the top of main() to choose the dataset.
 """
 
 import sys
@@ -28,10 +31,40 @@ from core.data_loader import load_dataset
 from core.trainer import train_transfer_learning
 
 
+def compare_normalizations(dataset):
+    """Compare simplenorm vs ImageNet CSV on identical (fold, method, model) combos."""
+    main_csv = Config.RESULTS_DIR / f'{dataset}_transfer.csv'
+    simple_csv = Config.RESULTS_DIR / f'{dataset}_transfer_simplenorm.csv'
+
+    if not main_csv.exists() or not simple_csv.exists():
+        print("Both CSVs are required for comparison, skip")
+        return
+
+    df_main = pd.read_csv(main_csv)
+    df_simple = pd.read_csv(simple_csv)
+
+    # Same fold+method+model rows must exist in both files to be comparable
+    merged = df_main.merge(
+        df_simple, on=['fold', 'method', 'model'],
+        suffixes=('_imagenet', '_simple')
+    )
+    merged['acc_delta'] = merged['accuracy_simple'] - merged['accuracy_imagenet']
+
+    wins = (merged['acc_delta'] > 0).sum()
+    ties = (merged['acc_delta'] == 0).sum()
+    losses = (merged['acc_delta'] < 0).sum()
+
+    print("\n" + "=" * 70)
+    print(f"COMPARISON: simple(0.5) vs ImageNet normalization ({dataset})")
+    print("=" * 70)
+    print(f"Combos compared: {len(merged)}")
+    print(f"simple better: {wins}  tie: {ties}  simple worse: {losses}")
+    print(f"Mean accuracy delta (simple - imagenet): {merged['acc_delta'].mean():+.4f}")
+
+
 def main():
     # iris, parkinsons, hepatitis, acute_inflammations, zoo, hayes_roth
-    DATASET = 'acute_inflammations'
-    # Full run: 5 methods × 4 models × 5 folds = 100 runs (10 already done → 90 new)
+    DATASET = 'parkinsons'
     # 'tinto', 'igtd', 'supertml', 'refined', 'deepinsight'
     METHODS = ['tinto', 'igtd', 'supertml', 'refined', 'deepinsight']
     # 'efficientnet_v2_m', 'mobilenet_v3_large', 'resnext50_32x4d', 'densenet161'
@@ -41,6 +74,7 @@ def main():
 
     print(f"\nDataset: {DATASET}  Methods: {METHODS}  Models: {MODELS}")
     print(f"Folds: {Config.N_FOLDS}  Epochs: {EPOCHS}  Device: {DEVICE}")
+    print("Normalization: simple (mean=0.5, std=0.5)")
 
     # Load tabular data from UCI dataset (preprocessed CSV + JSON)
     X, y, feature_names, target_names = load_dataset(DATASET)
@@ -48,7 +82,8 @@ def main():
 
     Config.create_dirs()
 
-    results_csv = Config.RESULTS_DIR / f'{DATASET}_transfer.csv'
+    # Separate CSV so the main ImageNet-normalized results are never touched
+    results_csv = Config.RESULTS_DIR / f'{DATASET}_transfer_simplenorm.csv'
 
     # Load existing results so re-runs only fill gaps and CSV is preserved
     results = []
@@ -79,7 +114,8 @@ def main():
 
                 print(f"[{count+1}/{total}] fold={fold} {method} {model}")
                 try:
-                    # Core call: generate images -> train CNN classifier -> return metrics
+                    # Same training call as run_transfer.py, only the
+                    # normalization of the loaded images changes
                     _, _, metrics = train_transfer_learning(
                         X, y,
                         fold_idx=fold,
@@ -88,6 +124,7 @@ def main():
                         model_name=model,
                         feature_names=feature_names,
                         device=DEVICE,
+                        use_simple_norm=True,
                     )
 
                     results.append({
@@ -118,10 +155,11 @@ def main():
     print(f"\nDone: {results_csv}")
 
     df = pd.read_csv(results_csv)
-    print("\nMean +- std per method x model:")
-    # the right order: groupby
+    print("\nMean +- std per method x model (simple norm):")
     summary = df.groupby(['method', 'model'])[['accuracy', 'f1_score', 'auc_roc']].agg(['mean', 'std']).round(4)
     print(summary)
+
+    compare_normalizations(DATASET)
 
 
 if __name__ == '__main__':

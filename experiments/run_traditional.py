@@ -1,8 +1,8 @@
 """
 Batch experiment runner for traditional ML baseline methods.
 
-Loops over traditional classifiers (SVM, Random Forest, KNN, Decision Tree,
-XGBoost), runs 5-fold CV for each, and saves results incrementally to CSV.
+Loops over traditional classifiers (SVM, Random Forest, KNN, Decision Tree), 
+runs 5-fold CV for each, and saves results incrementally to CSV.
 Re-running automatically skips methods that already have results.
 
 Configuration:
@@ -29,6 +29,7 @@ from core.traditional import run_traditional_experiment
 
 
 def main():
+    # iris, parkinsons, hepatitis, acute_inflammations, zoo, hayes_roth
     DATASET = 'hayes_roth'
     # 5 traditional baselines for comparison with the image-based methods
     METHODS = ['svm', 'random_forest', 'knn', 'decision_tree', 'xgboost']
@@ -44,6 +45,7 @@ def main():
     results_csv = Config.RESULTS_DIR / f'{DATASET}_traditional.csv'
     all_results = []
     done = set()
+
     # Load existing results to skip already-completed methods on re-run
     if results_csv.exists():
         df_existing = pd.read_csv(results_csv)

@@ -132,7 +132,10 @@ def train_epoch(model, dataloader, criterion, optimizer, device):
 
 # Evaluate the model on the validation set
 def evaluate_epoch(model, dataloader, criterion, device):
-    """Evaluate one epoch. Returns loss, accuracy, predictions, probabilities, true labels."""
+    """
+    Evaluate one epoch. 
+    Returns loss, accuracy, predictions, probabilities, true labels.
+    """
     model.eval()  # Evaluation mode (Dropout disabled, BatchNorm frozen)
     running_loss = 0.0
     correct = 0
@@ -298,13 +301,17 @@ def train_transfer_learning(X, y, fold_idx=0, epochs=50, method_name='tinto',
     if best_model_state:
         model.load_state_dict(best_model_state)
 
+    # evaluate_epoch return: loss, accuracy, predictions, probabilities, true labels
     _, _, best_preds, best_probs, best_labels = evaluate_epoch(
         model, val_loader, criterion, device
     )
 
     # Compute F1 and AUC-ROC
+    # F1 = 2 × (Precision × Recall) / (Precision + Recall)
     best_f1 = f1_score(best_labels, best_preds, average='weighted')
+
     try:
+        # [tensor([0.9, 0.1]), tensor([0.2, 0.8]), ...]  -> array([[0.9, 0.1], [0.2, 0.8], ...])
         best_probs = np.array(best_probs)
         # Binary: use positive-class probability; Multi-class: one-vs-rest
         if best_probs.shape[1] == 2:

@@ -18,12 +18,12 @@ class Config:
     # Dataset name → data subdirectory mapping
     # Lets load_dataset() find the right folder without hardcoding paths
     DATASET_DIR_MAP = {
-        'iris': '1.Numerical_iris',
-        'parkinsons': '2.Numerical_parkinsons',
-        'hepatitis': '3.Mixed_hepatitis',
-        'acute_inflammations': '4.Mixed_acute_inflammations',
-        'zoo': '5.Categorical_zoo',
-        'hayes_roth': '6.Categorical_hayes_roth',
+        'iris':                 '1.Numerical_iris',
+        'parkinsons':           '2.Numerical_parkinsons',
+        'hepatitis':            '3.Mixed_hepatitis',
+        'acute_inflammations':  '4.Mixed_acute_inflammations',
+        'zoo':                  '5.Categorical_zoo',
+        'hayes_roth':           '6.Categorical_hayes_roth',
         #'lenses': '6.Categorical_lenses',
     }
 

@@ -13,7 +13,7 @@ DATASETS = {
     'acute_inflammations': DATA_DIR / '4.Mixed_acute_inflammations/acute_inflammations.csv',
     'zoo':                 DATA_DIR / '5.Categorical_zoo/zoo.csv',
     'hayes_roth':          DATA_DIR / '6.Categorical_hayes_roth/hayes_roth.csv',
-    #'lenses':              DATA_DIR / '6.Categorical_lenses/lenses.csv',    
+    #'lenses':             DATA_DIR / '6.Categorical_lenses/lenses.csv',    
 }
 
 rows = []

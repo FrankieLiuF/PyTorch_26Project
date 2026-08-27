@@ -30,22 +30,22 @@ except ImportError:
 
 
 # Run 5-fold cross-validation for a single traditional ML method
-def run_traditional_experiment(X, y, 
-                               model_name='svm', 
-                               n_folds=5, 
+def run_traditional_experiment(X, y,
+                               model_name='svm',
+                               n_folds=5,
                                seed=42):
     """
     Run 5-fold cross-validation for a single traditional method.
-    
+
     Args:
-        X: Feature array 
-        y: Label array 
-        model_name: Name of the model 
-        n_folds: Number of folds 
+        X: Feature array
+        y: Label array
+        model_name: Name of the model
+        n_folds: Number of folds
         seed: Random seed
-    
+
     Returns:
-        list: Results for each fold 
+        list: Results for each fold
     """
     # Register of scikit-learn classifiers with fixed parameters for fair comparison
     models = {
@@ -57,8 +57,8 @@ def run_traditional_experiment(X, y,
 
     if XGB_AVAILABLE:
         models['xgboost'] = XGBClassifier(
-            n_estimators=100, 
-            random_state=seed, 
+            n_estimators=100,
+            random_state=seed,
             eval_metric='mlogloss'
         )
 
