@@ -1,4 +1,4 @@
-# PyTorch Tabular-to-Image Transfer Learning
+# Image-based Transformation for Small Tabular Datasets
 
 This project investigates whether small tabular classification datasets can benefit from image-based transfer learning. Tabular samples are converted into synthetic images with TINTOlib and classified using ImageNet-pretrained convolutional neural networks (CNNs). Their performance is compared with conventional machine-learning models under the same five-fold cross-validation protocol.
  
