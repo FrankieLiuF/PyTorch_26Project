@@ -64,6 +64,8 @@ python -c "import torch, torchvision, sklearn, xgboost; print(torch.__version__,
 python -c "from core.config import Config; print(Config.PROJECT_ROOT); print(Config.get_device())"
 ```
 
+The pipeline automatically selects a CUDA GPU when available and otherwise falls back to the CPU. CPU execution is supported, but the complete image-based experiments will take substantially longer.
+
 The local `TINTOlib/` directory is the transformation implementation used by the study. Do not install a different TINTOlib release over it.
 
 SuperTML requires the Arial font. It is normally available on Windows; Linux users may need to install Microsoft Core Fonts.
@@ -74,7 +76,12 @@ REFINED calls `mpiHill_UF.py` through `mpiexec`. On Windows, install [Microsoft 
 
 ## 5. Reproduction
 
-Run commands from the repository root. The processed data, generated images and complete result CSVs are included, so the full experiment does not need to be rerun to inspect or verify the reported outputs.
+Run all commands from the repository root. Sections 5.1--5.6 describe the complete workflow from data preprocessing to statistical analysis. The repository includes the processed data, generated-image cache and fold-level result CSVs used in the study. This supports two reproduction routes:
+
+- To inspect the reported experiment, keep the included files and run the analysis steps in Section 5.6. The experiment scripts detect completed results and reuse cached images.
+- To repeat model training, move the relevant dataset result CSVs out of `results/` and then follow Sections 5.2--5.5. Keep the image cache to repeat training with the original generated representations. To repeat image generation as well, also move the corresponding dataset directory out of `output/images/` before running the image-based experiment.
+
+Moving the existing files to a backup location preserves the reported outputs while preventing the incremental scripts from skipping completed work.
 
 Valid `DATASET` values are `iris`, `parkinsons`, `hepatitis`, `acute_inflammations`, `zoo` and `hayes_roth`.
 
@@ -91,6 +98,8 @@ python experiments/run_traditional.py
 ```
 
 Each dataset produces 25 fold-level results: five classifiers over five folds. Completed classifiers in the existing dataset CSV are skipped.
+
+Results are saved to `results/{dataset}_traditional.csv`.
 
 ### 5.3 Image-based Experiments
 
@@ -111,6 +120,8 @@ Each dataset produces 100 fold-level results:
 Results are appended to `results/{dataset}_transfer.csv`. Existing `(fold, method, model)` rows are skipped, including rows containing `NaN`. Remove a row before rerunning that combination.
 
 Generated images are stored under `output/images/{dataset}/{method}/fold_N/` and reused across backbones. The checked-in cache allows the training pipeline to reuse the reported image representations. A complete dataset took approximately 1 hour and 20 minutes on the RTX 4060 Laptop GPU used for the study; runtime depends on hardware and cache state.
+
+The main experiments save fold-level metrics rather than trained model checkpoints, because the study evaluates comparative performance rather than model deployment.
 
 ### 5.4 Normalization Ablation
 
