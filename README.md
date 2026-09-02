@@ -48,12 +48,22 @@ Main entry points:
 
 ## 4. Installation
 
-The reported environment used Python 3.11, PyTorch 2.2.2 and TorchVision 0.17.2.
+The reported environment used Python 3.11, PyTorch 2.2.2 and TorchVision 0.17.2. Install either Anaconda or Miniconda before following the commands below. Git is also required when cloning the repository; it is not required when using a downloaded ZIP file.
+
+Open PowerShell, clone the repository and enter its root directory:
+
+```powershell
+git clone https://github.com/FrankieLiuF/PyTorch_26Project.git
+cd PyTorch_26Project
+```
+
+If the repository was downloaded as a ZIP file instead, extract it and open PowerShell in the extracted `PyTorch_26Project` directory.
+
+Create and activate the environment, then install the dependencies:
 
 ```powershell
 conda create -n pytorch-tabular-image python=3.11
 conda activate pytorch-tabular-image
-cd path\to\PyTorch_26Project
 pip install -r requirements.txt
 ```
 
@@ -85,13 +95,21 @@ Moving the existing files to a backup location preserves the reported outputs wh
 
 Valid `DATASET` values are `iris`, `parkinsons`, `hepatitis`, `acute_inflammations`, `zoo` and `hayes_roth`.
 
+Each experiment runner processes one dataset at a time. To run all six datasets, change `DATASET`, save the script and rerun the command once for each valid value listed above.
+
 ### 5.1 Optional: Regenerate Processed Data
 
-Open `notebook/preprocess_dataset.ipynb` with its working directory set to `notebook/`, then run all cells. This overwrites the processed CSV and metadata files.
+This step can be skipped when using the included processed data. To recreate those files, open `notebook/preprocess_dataset.ipynb` in VS Code, Jupyter Notebook or JupyterLab. Set the notebook working directory to `notebook/`, select the `pytorch-tabular-image` environment as the Python kernel and run all cells in order. This overwrites the processed CSV and `dataset_info.json` files in the six dataset directories under `data/`.
 
 ### 5.2 Traditional Baselines
 
-Set `DATASET` near the top of `main()` in `experiments/run_traditional.py`, then run:
+Open `experiments/run_traditional.py` and locate the `DATASET = '...'` line inside `main()`. Replace only the value inside quotation marks with one of the valid dataset names. For example, to run Iris, use:
+
+```python
+DATASET = 'iris'
+```
+
+Save the file, return to PowerShell in the repository root and run:
 
 ```powershell
 python experiments/run_traditional.py
@@ -99,11 +117,17 @@ python experiments/run_traditional.py
 
 Each dataset produces 25 fold-level results: five classifiers over five folds. Completed classifiers in the existing dataset CSV are skipped.
 
-Results are saved to `results/{dataset}_traditional.csv`.
+Results are saved to `results/{dataset}_traditional.csv`. For Iris, the output file is `results/iris_traditional.csv`.
 
 ### 5.3 Image-based Experiments
 
-Set `DATASET` near the top of `main()` in `experiments/run_transfer.py`, then run:
+Open `experiments/run_transfer.py` and locate the `DATASET = '...'` line inside `main()`. Replace only the value inside quotation marks. For example:
+
+```python
+DATASET = 'iris'
+```
+
+Save the file, return to PowerShell in the repository root and run:
 
 ```powershell
 python experiments/run_transfer.py
@@ -119,13 +143,21 @@ Each dataset produces 100 fold-level results:
 
 Results are appended to `results/{dataset}_transfer.csv`. Existing `(fold, method, model)` rows are skipped, including rows containing `NaN`. Remove a row before rerunning that combination.
 
+For Iris, the output file is `results/iris_transfer.csv`. A successful complete run contains 100 data rows, excluding the CSV header.
+
 Generated images are stored under `output/images/{dataset}/{method}/fold_N/` and reused across backbones. The checked-in cache allows the training pipeline to reuse the reported image representations. A complete dataset took approximately 1 hour and 20 minutes on the RTX 4060 Laptop GPU used for the study; runtime depends on hardware and cache state.
 
 The main experiments save fold-level metrics rather than trained model checkpoints, because the study evaluates comparative performance rather than model deployment.
 
 ### 5.4 Normalization Ablation
 
-Set `DATASET` in `experiments/run_transfer_simplenorm.py`, then run:
+Open `experiments/run_transfer_simplenorm.py` and replace the value in its `DATASET = '...'` line in the same way. For example:
+
+```python
+DATASET = 'iris'
+```
+
+Save the file, return to PowerShell in the repository root and run:
 
 ```powershell
 python experiments/run_transfer_simplenorm.py
@@ -136,6 +168,8 @@ Outputs are saved as `results/{dataset}_transfer_simplenorm.csv`. The script com
 ### 5.5 Training Histories
 
 `experiments/run_history.py` reruns the combinations listed in `RUNS` and saves their epoch histories and plots under `results/history/`.
+
+The supplied `RUNS` list contains one representative combination for each dataset. It can be run unchanged to recreate the six reported history plots.
 
 ```powershell
 python experiments/run_history.py
@@ -154,6 +188,8 @@ This creates:
 - `results/analysis_summary.csv`
 - `results/analysis_friedman.csv`
 - `results/analysis_wilcoxon.csv`
+
+No dataset value needs to be edited for this step. The script automatically reads the traditional and main transfer result CSVs for all six datasets.
 
 ## 6. Experimental Configuration
 
