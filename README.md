@@ -2,7 +2,7 @@
 
 This project investigates whether small tabular classification datasets can benefit from image-based transfer learning. Tabular samples are converted into synthetic images with TINTOlib and classified using ImageNet-pretrained convolutional neural networks (CNNs). Their performance is compared with conventional machine-learning models under the same five-fold cross-validation protocol.
  
-## Research Question
+## 1. Research Question
 
 Can tabular-to-image transformations combined with pretrained CNNs provide competitive classification performance on small numerical, mixed, and categorical datasets when compared with traditional tabular classifiers?
 
@@ -14,7 +14,7 @@ The project evaluates:
 - Accuracy, weighted F1-score, and one-vs-rest AUC-ROC;
 - statistical differences using Friedman, Nemenyi post-hoc, and Wilcoxon signed-rank tests.
 
-## Experimental Pipeline
+## 2. Experimental Pipeline
 
 ```text
 Raw UCI data
@@ -30,34 +30,36 @@ Raw UCI data
 
 Fitting the scaler separately within each training fold prevents information from the validation fold leaking into training. The same scaled fold data are used by the image-based and traditional pipelines.
 
-## Datasets
+## 3. Datasets
 
 Six small UCI classification datasets are included. The feature counts below refer to the preprocessed data used by the experiments.
 
-| Dataset | Data type | Samples | Features | Classes |
-| --- | --- | ---: | ---: | ---: |
-| Iris | Numerical | 150 | 4 | 3 |
-| Parkinsons | Numerical | 195 | 22 | 2 |
-| Hepatitis | Mixed | 155 | 19 | 2 |
-| Acute Inflammations | Mixed | 120 | 11 | 2 |
-| Zoo | Categorical | 101 | 21 | 7 |
-| Hayes-Roth | Categorical | 160 | 15 | 3 |
+| Dataset | Data type | Samples | Encoded features | Classes | Class distribution |
+| --- | --- | ---: | ---: | ---: | --- |
+| Iris | Numerical | 150 | 4 | 3 | 50 / 50 / 50 |
+| Parkinsons | Numerical | 195 | 22 | 2 | 48 / 147 |
+| Hepatitis | Mixed | 155 | 19 | 2 | DIE: 32; LIVE: 123 |
+| Acute Inflammations | Mixed | 120 | 11 | 2 | 61 / 59 |
+| Zoo | Categorical | 101 | 21 | 7 | 41 / 20 / 5 / 13 / 4 / 8 / 10 |
+| Hayes-Roth | Categorical | 160 | 15 | 3 | 65 / 64 / 31 |
+
+Feature counts refer to the encoded data used by the experiments. Except where class names are shown explicitly, class distributions follow the target-label order stored in each dataset's `dataset_info.json`. The distributions were verified using `data/check_balance.py`; its saved output is provided in `data/dataset_balance.csv`.
 
 Encoding is dataset-specific. The 13 binary clinical indicators in Hepatitis are stored as single 0/1 columns. In Acute Inflammations, each of the five binary symptom indicators is represented by two complementary dummy columns, giving 11 encoded features from the six original attributes. Zoo retains its 15 binary attributes and one-hot encodes `legs`, while Hayes-Roth one-hot encodes all four categorical attributes. The same processed CSV is supplied to the image-based and traditional pipelines within each dataset. The complete preparation code is in `notebook/preprocess_dataset.ipynb`.
 
-## Repository Structure
+Each dataset directory retains the files supplied with the original UCI download for provenance. The preprocessing notebook reads `iris.data`, `parkinsons.data`, `hepatitis.data`, `diagnosis.data`, `zoo.data`, and both `hayes-roth.data` and `hayes-roth.test`. Other files distributed with those datasets are retained but are not used by the experimental pipeline.
+
+## 4. Repository Structure
 
 ```text
-core/               Reusable data, model, training, baseline, and analysis modules
-experiments/        Batch runners for transfer learning, baselines, and analysis
-data/               Preprocessed datasets and dataset metadata
+core/                         Reusable data, model, training, baseline, and analysis modules
+experiments/                  Batch runners for transfer learning, baselines, and analysis
+data/                         Original UCI files, processed CSVs, and dataset metadata
 notebook/
-|-- preprocess_dataset.ipynb   Dataset preparation used by the experiments
-`-- pipeline_demo.ipynb        Optional interactive demonstration of the modular pipeline
-scripts/            Experiment-design and report-planning notes
-TINTOlib/           Local project copy of the tabular-to-image library
-results/            Fold-level results, summaries, and statistical tests
-output/images/      Generated image cache (created automatically and gitignored)
+`-- preprocess_dataset.ipynb  Dataset preparation used by the experiments
+TINTOlib/                     Local project copy of the tabular-to-image library
+results/                      Fold-level results, summaries, and statistical tests
+output/images/                Generated image cache (created automatically and gitignored)
 ```
 
 The main experiment entry points are:
@@ -68,7 +70,7 @@ The main experiment entry points are:
 - `experiments/run_transfer_simplenorm.py`: additional normalization ablation;
 - `experiments/run_history.py`: training-history experiment support.
 
-## Environment Setup
+## 5. Environment Setup
 
 The project was developed with Python 3.11, PyTorch 2.2.2, and torchvision 0.17.2. A CUDA-capable GPU is recommended for the CNN experiments, although PyTorch can fall back to CPU at a substantially slower speed.
 
@@ -90,7 +92,7 @@ The processed CSV files and their `dataset_info.json` metadata are already inclu
 
 `TINTOlib/` is imported directly from the repository. Keep this bundled copy in place so that the experiments use the same implementation as the reported study. The dataset-specific IGTD grid size is supplied by the project code rather than by installing a different TINTOlib release.
 
-### MPI Requirement for REFINED
+### 5.1 MPI Requirement for REFINED
 
 REFINED launches `mpiHill_UF.py` through `mpiexec`.
 
@@ -99,16 +101,16 @@ REFINED launches `mpiHill_UF.py` through `mpiexec`.
 
 MPI is not required when REFINED is excluded. TINTO, IGTD, SuperTML, and DeepInsight run without it.
 
-### Known Windows Warnings
+### 5.2 Known Windows Warnings
 
 - Conda may report that a system-wide MS-MPI installation shadows its own package. This does not prevent REFINED from running when `mpiexec` is correctly configured.
 - Joblib/loky may be unable to detect the number of physical CPU cores through WMIC on Windows 11. The experiment scripts set `LOKY_MAX_CPU_COUNT` to suppress this harmless warning.
 
-## Reproducing the Experiments
+## 6. Reproducing the Experiments
 
 Run all commands from the repository root.
 
-### 1. Preprocess the datasets
+### 6.1 Preprocess the Datasets
 
 This step is only necessary when the processed CSV files are missing or the preprocessing procedure has changed.
 
@@ -116,7 +118,7 @@ Open `notebook/preprocess_dataset.ipynb` and run all cells. It generates a datas
 
 Run the notebook with its working directory set to `notebook/`. It derives the repository root from the notebook's current directory. Reprocessing overwrites the existing processed CSV and metadata files, so keep the checked-in versions if the aim is to reproduce the reported results exactly.
 
-### 2. Run the traditional baselines
+### 6.2 Run the Traditional Baselines
 
 Set `DATASET` near the top of `main()` in `experiments/run_traditional.py`, then run:
 
@@ -126,7 +128,7 @@ python experiments/run_traditional.py
 
 Each dataset evaluates five models over five folds. A model already present in the dataset's results CSV is skipped when the script is run again. To rerun an incomplete or failed model, remove all of that model's rows from the corresponding CSV first.
 
-### 3. Run the transfer-learning experiments
+### 6.3 Run the Transfer-learning Experiments
 
 Set `DATASET` near the top of `main()` in `experiments/run_transfer.py`, then run:
 
@@ -146,7 +148,7 @@ On the NVIDIA RTX 4060 Laptop GPU used for the study, a complete 100-run dataset
 
 Although `bargraph` is available in the general TINTOlib method registry, it is not part of the five-method experiment reported here.
 
-### 4. Run the normalization ablation
+### 6.4 Run the Normalization Ablation
 
 The supplementary experiment compares ImageNet normalization with a simple mean and standard deviation of 0.5 for every channel. Set `DATASET` in `experiments/run_transfer_simplenorm.py`, then run:
 
@@ -156,7 +158,7 @@ python experiments/run_transfer_simplenorm.py
 
 Results are written to `results/{dataset}_transfer_simplenorm.csv`. If the corresponding main transfer CSV exists, the script also prints matched win, tie and loss counts and the mean accuracy difference.
 
-### 5. Record representative training histories
+### 6.5 Record Representative Training Histories
 
 `experiments/run_history.py` reruns a small, explicitly selected set of transformation-backbone combinations and retains their epoch histories. Edit the `RUNS` list only if different representative runs are required, then run:
 
@@ -166,7 +168,7 @@ python experiments/run_history.py
 
 The raw histories and plotted loss curves are saved under `results/history/`. These runs are separate diagnostics and do not replace the fold-level results used by the main analysis.
 
-### 6. Produce summaries and statistical tests
+### 6.6 Produce Summaries and Statistical Tests
 
 After all required dataset experiments have completed, run:
 
@@ -180,7 +182,7 @@ This produces:
 - `results/analysis_friedman.csv`: Friedman tests, Nemenyi comparisons, average ranks, and letter groups;
 - `results/analysis_wilcoxon.csv`: paired comparison between the best transfer method and best traditional baseline.
 
-### Resetting Cached Outputs
+### 6.7 Resetting Cached Outputs
 
 Only clear outputs when preprocessing or experiment settings have changed. The image-cache path records the dataset, transformation method and fold, but not every preprocessing or transformation parameter. Images generated under old settings may therefore be reused unless the cache is cleared. These commands permanently remove generated files, so retain a copy of results that must be preserved.
 
@@ -194,7 +196,7 @@ Remove-Item results/iris_transfer.csv
 
 Replace `iris` with the required dataset name. Removing a results CSV does not remove its generated-image cache.
 
-## Current Results
+## 7. Current Results
 
 The checked-in result files show the following best mean accuracies across five folds:
 
@@ -211,23 +213,23 @@ These results indicate that traditional models remain stronger on most of the sm
 
 The full fold-level results and metric-specific analyses are available in `results/`. The normalization-ablation CSVs are supplementary and are not included by `run_analysis.py` in the main comparison.
 
-## Evaluation Notes and Limitations
+## 8. Evaluation Notes and Limitations
 
 - Accuracy measures overall correctness; weighted F1 gives class-frequency-weighted precision/recall balance; AUC-ROC is calculated using the one-vs-rest convention for multiclass datasets.
 - Zoo contains a class with only four samples. One validation fold therefore lacks at least one class, making multiclass AUC-ROC undefined for that fold. Its mean AUC is calculated over the remaining valid folds.
 - These datasets contain only 101-195 samples. Five-fold estimates and hypothesis tests therefore have limited statistical power.
 - Converting tabular data to images and training CNNs introduces substantially more computation than the traditional baselines.
-- Only one fixed random seed (`42`) and the configured model settings are represented; repeated cross-validation or additional seeds would support stronger general conclusions.
+- Only one fixed split seed (`42`) and the configured model settings are represented; repeated cross-validation or additional training seeds would support stronger general conclusions.
 - The experiments evaluate pretrained CNNs on synthetic images, not CNNs trained from scratch, so the conclusions apply specifically to this transfer-learning setup.
 
-## Key Implementation Details
+## 9. Key Implementation Details
 
 - Training uses 50 epochs, batch size 16, learning rate `1e-4`, weight decay `1e-5`, and five stratified folds.
 - Generated images are resized for CNN input and normalized with ImageNet mean `[0.485, 0.456, 0.406]` and standard deviation `[0.229, 0.224, 0.225]`.
 - IGTD chooses its grid scale dynamically as `ceil(sqrt(n_features))`, allowing datasets with different preprocessed feature counts to fit the image grid.
 - Fold results are written incrementally so that long experiments can resume after interruption.
 
-## Code and Third-Party Software
+## 10. Code and Third-Party Software
 
 The project-specific experiment framework is implemented in `core/` and `experiments/`. This includes dataset loading, fold-wise preprocessing, image-cache handling, model construction, training, baseline evaluation, metric logging and statistical analysis.
 
@@ -235,7 +237,7 @@ The project-specific experiment framework is implemented in `core/` and `experim
 
 The processed datasets remain subject to their original UCI dataset terms and citations. The repository does not claim ownership of the original datasets or the bundled TINTOlib implementation.
 
-## References
+## 11. References
 
 - M. Castillo-Cara et al., “TINTO: Converting Tidy Data into Image for Classification with 2-Dimensional Convolutional Neural Networks,” *SoftwareX*, 22, 101391, 2023. [https://doi.org/10.1016/j.softx.2023.101391](https://doi.org/10.1016/j.softx.2023.101391)
 - TINTOlib documentation and source references are included in the local `TINTOlib/README.md`.
