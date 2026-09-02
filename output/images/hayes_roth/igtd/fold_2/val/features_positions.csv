@@ -1,0 +1,16 @@
+feature,row,column
+hobby_0,1,2
+hobby_1,3,2
+hobby_2,0,0
+age_0,2,1
+age_1,2,0
+age_2,2,2
+age_3,0,3
+educational_level_0,3,1
+educational_level_1,1,1
+educational_level_2,0,2
+educational_level_3,3,0
+marital_status_0,1,0
+marital_status_1,2,3
+marital_status_2,0,1
+marital_status_3,1,3

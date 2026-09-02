@@ -17,11 +17,17 @@ torchvision==0.17.2
 # Traditional ML baselines
 xgboost==3.2.0
 
+# Image generation
+Pillow==11.1.0
+
 # Experiment analysis
-scikit-posthocs
+scikit-posthocs==0.14.0
 
 # REFINED method (MPI-based hill climbing via subprocess)
-mpi4py
+mpi4py==4.1.2
+
+# Optional: preprocessing notebook
+ipykernel==6.31.0
 
 # NOTE: TINTOlib is NOT installed from this file. The project uses the
 # local TINTOlib/ directory. Do not pip install TINTOlib separately.

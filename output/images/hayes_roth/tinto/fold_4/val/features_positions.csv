@@ -1,0 +1,16 @@
+feature,row,column
+hobby_0,11.0,5.0
+hobby_1,9.0,12.0
+hobby_2,9.0,11.0
+age_0,11.0,1.0
+age_1,13.0,16.0
+age_2,5.0,10.0
+age_3,9.0,11.0
+educational_level_0,17.0,13.0
+educational_level_1,2.0,7.0
+educational_level_2,10.0,8.0
+educational_level_3,8.0,11.0
+marital_status_0,3.0,11.0
+marital_status_1,16.0,3.0
+marital_status_2,10.0,13.0
+marital_status_3,8.0,11.0

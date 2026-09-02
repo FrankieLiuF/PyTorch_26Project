@@ -1,0 +1,12 @@
+feature,row,column
+temperature,0,2
+nausea_0,1,3
+nausea_1,3,0
+lumbar_pain_0,0,3
+lumbar_pain_1,3,1
+urine_pushing_0,3,2
+urine_pushing_1,0,1
+micturition_pain_0,2,3
+micturition_pain_1,1,0
+burning_urethra_0,3,3
+burning_urethra_1,0,0
