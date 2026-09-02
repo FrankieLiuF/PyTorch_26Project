@@ -165,10 +165,15 @@ The complete fold-level results are included under `results/`. The best mean acc
 
 ## 8. Third-party Software and Data
 
-The project-specific pipeline is implemented in `core/` and `experiments/`. `TINTOlib/` is bundled under its original Apache License 2.0. PyTorch and TorchVision provide the pretrained CNNs; scikit-learn and XGBoost provide the baselines and evaluation utilities. The datasets retain their original UCI documentation and terms.
+The project-specific pipeline is implemented in `core/` and `experiments/`. `TINTOlib/` is bundled under its original Apache License 2.0. PyTorch and TorchVision provide the pretrained CNNs; scikit-learn and XGBoost provide the baselines and evaluation utilities. The datasets retain their original UCI documentation and terms. Complete dependency versions are recorded in `requirements.txt`.
 
-Key source:
+## 9. References
 
-- M. Castillo-Cara et al., “TINTO: Converting Tidy Data into Image for Classification with 2-Dimensional Convolutional Neural Networks,” *SoftwareX*, vol. 22, 101391, 2023. [https://doi.org/10.1016/j.softx.2023.101391](https://doi.org/10.1016/j.softx.2023.101391)
-
-Further transformation references are listed in `TINTOlib/README.md`, and the complete dependency versions are recorded in `requirements.txt`.
+- B. Sun, L. Yang, W. Zhang, M. Lin, P. Dong, C. Young, and J. Dong, “SuperTML: Two-dimensional word embedding for the precognition on structured tabular data,” in *Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition Workshops*, 2019, pp. 2973–2981.
+- A. Sharma, E. Vans, D. Shigemizu, K. A. Boroevich, and T. Tsunoda, “DeepInsight: A methodology to transform a non-image data to an image for convolution neural network architecture,” *Scientific Reports*, vol. 9, Art. no. 11399, 2019. [doi:10.1038/s41598-019-47765-6](https://doi.org/10.1038/s41598-019-47765-6)
+- O. Bazgir, R. Zhang, S. R. Dhruba, R. Rahman, S. Ghosh, and R. Pal, “Representation of features as images with neighborhood dependencies for compatibility with convolutional neural networks,” *Nature Communications*, vol. 11, Art. no. 4391, 2020. [doi:10.1038/s41467-020-18197-y](https://doi.org/10.1038/s41467-020-18197-y)
+- Y. Zhu et al., “Converting tabular data into images for deep learning with convolutional neural networks,” *Scientific Reports*, vol. 11, Art. no. 11325, 2021. [doi:10.1038/s41598-021-90923-y](https://doi.org/10.1038/s41598-021-90923-y)
+- M. Castillo-Cara, R. Talla-Chumpitaz, R. García-Castro, and L. Orozco-Barbosa, “TINTO: Converting tidy data into image for classification with 2-dimensional convolutional neural networks,” *SoftwareX*, vol. 22, Art. no. 101391, 2023. [doi:10.1016/j.softx.2023.101391](https://doi.org/10.1016/j.softx.2023.101391)
+- J. Liu, D. González-Fernández, M. Castillo-Cara, and R. García-Castro, “TINTOlib: A Python library for transforming tabular data into synthetic images for deep neural networks,” *SoftwareX*, vol. 32, Art. no. 102444, 2025. [doi:10.1016/j.softx.2025.102444](https://doi.org/10.1016/j.softx.2025.102444)
+- M. Kelly, R. Longjohn, and K. Nottingham, “The UCI Machine Learning Repository,” 2023. [Online]. Available: [https://archive.ics.uci.edu/](https://archive.ics.uci.edu/)
+- PyTorch, “Models and pre-trained weights,” *TorchVision documentation*. [Online]. Available: [https://docs.pytorch.org/vision/stable/models.html](https://docs.pytorch.org/vision/stable/models.html)
