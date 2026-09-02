@@ -169,7 +169,7 @@ The project-specific pipeline is implemented in `core/` and `experiments/`. `TIN
 
 ## 9. References
 
-- B. Sun, L. Yang, W. Zhang, M. Lin, P. Dong, C. Young, and J. Dong, “SuperTML: Two-dimensional word embedding for the precognition on structured tabular data,” in *Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition Workshops*, 2019, pp. 2973–2981.
+- B. Sun, L. Yang, W. Zhang, M. Lin, P. Dong, C. Young, and J. Dong, “SuperTML: Two-dimensional word embedding for the precognition on structured tabular data,” in *Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition Workshops*, 2019, pp. 2973–2981. [doi:10.1109/CVPRW.2019.00360](https://doi.org/10.1109/CVPRW.2019.00360)
 - A. Sharma, E. Vans, D. Shigemizu, K. A. Boroevich, and T. Tsunoda, “DeepInsight: A methodology to transform a non-image data to an image for convolution neural network architecture,” *Scientific Reports*, vol. 9, Art. no. 11399, 2019. [doi:10.1038/s41598-019-47765-6](https://doi.org/10.1038/s41598-019-47765-6)
 - O. Bazgir, R. Zhang, S. R. Dhruba, R. Rahman, S. Ghosh, and R. Pal, “Representation of features as images with neighborhood dependencies for compatibility with convolutional neural networks,” *Nature Communications*, vol. 11, Art. no. 4391, 2020. [doi:10.1038/s41467-020-18197-y](https://doi.org/10.1038/s41467-020-18197-y)
 - Y. Zhu et al., “Converting tabular data into images for deep learning with convolutional neural networks,” *Scientific Reports*, vol. 11, Art. no. 11325, 2021. [doi:10.1038/s41598-021-90923-y](https://doi.org/10.1038/s41598-021-90923-y)
