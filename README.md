@@ -66,6 +66,8 @@ python -c "from core.config import Config; print(Config.PROJECT_ROOT); print(Con
 
 The local `TINTOlib/` directory is the transformation implementation used by the study. Do not install a different TINTOlib release over it.
 
+SuperTML requires the Arial font. It is normally available on Windows; Linux users may need to install Microsoft Core Fonts.
+
 ### 4.1 REFINED Requirement
 
 REFINED calls `mpiHill_UF.py` through `mpiexec`. On Windows, install [Microsoft MPI](https://learn.microsoft.com/en-us/message-passing-interface/microsoft-mpi) and confirm that `mpiexec` is available on `PATH`. On Linux, install an MPI implementation such as MPICH. MPI is not required for the other four transformations.
@@ -73,6 +75,8 @@ REFINED calls `mpiHill_UF.py` through `mpiexec`. On Windows, install [Microsoft 
 ## 5. Reproduction
 
 Run commands from the repository root. The processed data, generated images and complete result CSVs are included, so the full experiment does not need to be rerun to inspect or verify the reported outputs.
+
+Valid `DATASET` values are `iris`, `parkinsons`, `hepatitis`, `acute_inflammations`, `zoo` and `hayes_roth`.
 
 ### 5.1 Optional: Regenerate Processed Data
 
@@ -95,6 +99,8 @@ Set `DATASET` near the top of `main()` in `experiments/run_transfer.py`, then ru
 ```powershell
 python experiments/run_transfer.py
 ```
+
+The first image-based run may download the ImageNet-pretrained weights through TorchVision. An internet connection is required if these weights are not already cached.
 
 Each dataset produces 100 fold-level results:
 
