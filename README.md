@@ -43,7 +43,7 @@ Six small UCI classification datasets are included. The feature counts below ref
 | Zoo | Categorical | 101 | 21 | 7 |
 | Hayes-Roth | Categorical | 160 | 15 | 3 |
 
-Encoding is dataset-specific. Hepatitis binary indicators remain single 0/1 columns, while the binary Acute Inflammations indicators, `legs` in Zoo, and the categorical attributes in Hayes-Roth are one-hot encoded. The preprocessing notebook records the complete preparation procedure.
+Encoding is dataset-specific. The 13 binary clinical indicators in Hepatitis are stored as single 0/1 columns. In Acute Inflammations, each of the five binary symptom indicators is represented by two complementary dummy columns, giving 11 encoded features from the six original attributes. Zoo retains its 15 binary attributes and one-hot encodes `legs`, while Hayes-Roth one-hot encodes all four categorical attributes. The same processed CSV is supplied to the image-based and traditional pipelines within each dataset. The complete preparation code is in `notebook/preprocess_dataset.ipynb`.
 
 ## Repository Structure
 
@@ -51,7 +51,9 @@ Encoding is dataset-specific. Hepatitis binary indicators remain single 0/1 colu
 core/               Reusable data, model, training, baseline, and analysis modules
 experiments/        Batch runners for transfer learning, baselines, and analysis
 data/               Preprocessed datasets and dataset metadata
-notebook/           Preprocessing notebook and pipeline demonstrations
+notebook/
+|-- preprocess_dataset.ipynb   Dataset preparation used by the experiments
+`-- pipeline_demo.ipynb        Optional interactive demonstration of the modular pipeline
 scripts/            Experiment-design and report-planning notes
 TINTOlib/           Local project copy of the tabular-to-image library
 results/            Fold-level results, summaries, and statistical tests
@@ -73,10 +75,20 @@ The project was developed with Python 3.11, PyTorch 2.2.2, and torchvision 0.17.
 ```powershell
 conda create -n pytorch-tabular-image python=3.11
 conda activate pytorch-tabular-image
+cd path\to\PyTorch_26Project
 pip install -r requirements.txt
 ```
 
-`TINTOlib/` is imported directly from the repository and should not be replaced by a separately installed TINTOlib version because the local copy contains project-specific adjustments.
+Confirm that the project imports correctly before starting a long experiment:
+
+```powershell
+python -c "import torch, torchvision, sklearn, xgboost; print(torch.__version__, torchvision.__version__)"
+python -c "from core.config import Config; print(Config.PROJECT_ROOT); print(Config.get_device())"
+```
+
+The processed CSV files and their `dataset_info.json` metadata are already included under `data/`, so preprocessing is not required for a normal reproduction run.
+
+`TINTOlib/` is imported directly from the repository. Keep this bundled copy in place so that the experiments use the same implementation as the reported study. The dataset-specific IGTD grid size is supplied by the project code rather than by installing a different TINTOlib release.
 
 ### MPI Requirement for REFINED
 
@@ -102,6 +114,8 @@ This step is only necessary when the processed CSV files are missing or the prep
 
 Open `notebook/preprocess_dataset.ipynb` and run all cells. It generates a dataset CSV and `dataset_info.json` for each dataset.
 
+Run the notebook with its working directory set to `notebook/`. It derives the repository root from the notebook's current directory. Reprocessing overwrites the existing processed CSV and metadata files, so keep the checked-in versions if the aim is to reproduce the reported results exactly.
+
 ### 2. Run the traditional baselines
 
 Set `DATASET` near the top of `main()` in `experiments/run_traditional.py`, then run:
@@ -110,7 +124,7 @@ Set `DATASET` near the top of `main()` in `experiments/run_traditional.py`, then
 python experiments/run_traditional.py
 ```
 
-Each dataset evaluates five models over five folds. Existing completed models are skipped when the script is run again.
+Each dataset evaluates five models over five folds. A model already present in the dataset's results CSV is skipped when the script is run again. To rerun an incomplete or failed model, remove all of that model's rows from the corresponding CSV first.
 
 ### 3. Run the transfer-learning experiments
 
@@ -126,11 +140,33 @@ A complete dataset experiment contains:
 5 transformations x 4 CNNs x 5 folds = 100 training runs
 ```
 
-Results are saved incrementally to `results/{dataset}_transfer.csv`. A restarted experiment skips completed `(fold, method, model)` combinations.
+Results are saved incrementally to `results/{dataset}_transfer.csv`. A restarted experiment skips previously recorded `(fold, method, model)` combinations, including rows containing `NaN`. To rerun a failed combination, remove its row from the CSV before restarting the script.
+
+On the NVIDIA RTX 4060 Laptop GPU used for the study, a complete 100-run dataset experiment took approximately 1 hour and 20 minutes. Runtime varies with the transformation method, hardware and whether generated images are already cached. CPU execution is supported but is substantially slower.
 
 Although `bargraph` is available in the general TINTOlib method registry, it is not part of the five-method experiment reported here.
 
-### 4. Produce summaries and statistical tests
+### 4. Run the normalization ablation
+
+The supplementary experiment compares ImageNet normalization with a simple mean and standard deviation of 0.5 for every channel. Set `DATASET` in `experiments/run_transfer_simplenorm.py`, then run:
+
+```powershell
+python experiments/run_transfer_simplenorm.py
+```
+
+Results are written to `results/{dataset}_transfer_simplenorm.csv`. If the corresponding main transfer CSV exists, the script also prints matched win, tie and loss counts and the mean accuracy difference.
+
+### 5. Record representative training histories
+
+`experiments/run_history.py` reruns a small, explicitly selected set of transformation-backbone combinations and retains their epoch histories. Edit the `RUNS` list only if different representative runs are required, then run:
+
+```powershell
+python experiments/run_history.py
+```
+
+The raw histories and plotted loss curves are saved under `results/history/`. These runs are separate diagnostics and do not replace the fold-level results used by the main analysis.
+
+### 6. Produce summaries and statistical tests
 
 After all required dataset experiments have completed, run:
 
@@ -146,15 +182,17 @@ This produces:
 
 ### Resetting Cached Outputs
 
-Only clear outputs when preprocessing or experiment settings have changed. These commands permanently remove generated files, so retain a copy of results that must be preserved.
+Only clear outputs when preprocessing or experiment settings have changed. The image-cache path records the dataset, transformation method and fold, but not every preprocessing or transformation parameter. Images generated under old settings may therefore be reused unless the cache is cleared. These commands permanently remove generated files, so retain a copy of results that must be preserved.
 
 ```powershell
 # Clear generated images only
-Remove-Item -Recurse -Force output/images
+if (Test-Path output/images) { Remove-Item -Recurse -Force output/images }
 
 # Clear one dataset's transfer results only
-Remove-Item results/{dataset}_transfer.csv
+Remove-Item results/iris_transfer.csv
 ```
+
+Replace `iris` with the required dataset name. Removing a results CSV does not remove its generated-image cache.
 
 ## Current Results
 
@@ -188,6 +226,14 @@ The full fold-level results and metric-specific analyses are available in `resul
 - Generated images are resized for CNN input and normalized with ImageNet mean `[0.485, 0.456, 0.406]` and standard deviation `[0.229, 0.224, 0.225]`.
 - IGTD chooses its grid scale dynamically as `ceil(sqrt(n_features))`, allowing datasets with different preprocessed feature counts to fit the image grid.
 - Fold results are written incrementally so that long experiments can resume after interruption.
+
+## Code and Third-Party Software
+
+The project-specific experiment framework is implemented in `core/` and `experiments/`. This includes dataset loading, fold-wise preprocessing, image-cache handling, model construction, training, baseline evaluation, metric logging and statistical analysis.
+
+`TINTOlib/` is a bundled third-party library used to generate the five image representations. It retains its original Apache License 2.0 and supporting documentation. PyTorch and TorchVision provide the pretrained CNNs, while scikit-learn and XGBoost provide the traditional classifiers and evaluation utilities. See `requirements.txt` for the complete runtime dependency list.
+
+The processed datasets remain subject to their original UCI dataset terms and citations. The repository does not claim ownership of the original datasets or the bundled TINTOlib implementation.
 
 ## References
 

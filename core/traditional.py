@@ -59,7 +59,8 @@ def run_traditional_experiment(X, y,
         models['xgboost'] = XGBClassifier(
             n_estimators=100,
             random_state=seed,
-            eval_metric='mlogloss'
+            # the multiclass logarithmic loss (if using evaluation or early stopping)
+            eval_metric='mlogloss' 
         )
 
     if model_name not in models:
