@@ -220,6 +220,8 @@ The complete fold-level results are included under `results/`. The best mean acc
 
 The project-specific pipeline is implemented in `core/` and `experiments/`. `TINTOlib/` is bundled under its original Apache License 2.0. PyTorch and TorchVision provide the pretrained CNNs; scikit-learn and XGBoost provide the baselines and evaluation utilities. The datasets retain their original UCI documentation and terms. Complete dependency versions are recorded in `requirements.txt`.
 
+Further attribution and licence information is provided in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
 ## 9. References
 
 - B. Sun, L. Yang, W. Zhang, M. Lin, P. Dong, C. Young, and J. Dong, “SuperTML: Two-dimensional word embedding for the precognition on structured tabular data,” in *Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition Workshops*, 2019, pp. 2973–2981. [doi:10.1109/CVPRW.2019.00360](https://doi.org/10.1109/CVPRW.2019.00360)
